@@ -15,7 +15,7 @@ import type { BoxResult, Role } from "./lib/types";
 type Screen = "home" | "morph" | "sealed" | "result";
 type Modal = "rules" | "custom" | null;
 
-const DAILY_CHANCES = 10;
+const DAILY_CHANCES = 2;
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export default function App() {

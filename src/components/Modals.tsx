@@ -13,7 +13,7 @@ export function RulesModal({ open, onClose }: { open: boolean; onClose: () => vo
         <li><b>叁</b><div><h3>开盒入图鉴</h3><p>打开专属硬盒揭晓品质，每次成功生成都会自动收入万象图鉴。</p></div></li>
       </ol>
       <div className="rule-facts">
-        <span>本次免费 <b>10 次</b></span><span>分享加赠 <b>1 次</b></span><span>普通 / 稀有 / 传说 <b>60 / 25 / 15</b></span>
+        <span>本次免费 <b>2 次</b></span><span>分享加赠 <b>1 次</b></span><span>普通 / 稀有 / 传说 <b>60 / 25 / 15</b></span>
       </div>
       <button className="gold-button dialog-submit" onClick={onClose}>已知晓，去择丹</button>
     </OverlayModal>
