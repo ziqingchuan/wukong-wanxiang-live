@@ -12,13 +12,18 @@ type Props = {
   zipUrl: string;
 };
 
-/** 将外部 TOS CDN URL 转成走本地 proxy（dev 时自动，prod 时原样） */
+/** 将外部 TOS CDN URL 转成走转发层（dev 用 Vite 中间件，线上用 Cloudflare Worker） */
 function toProxyUrl(url: string): string {
-  // Vite dev server middleware 在 /api/tos-proxy?url=xxx
-  // 生产环境 proxy 路径由部署侧（Cloudflare Worker 等）保证
+  // 线上：构建时注入的 Worker 地址，如 https://wukong-tos-proxy.xxx.workers.dev
+  const workerBase = import.meta.env.VITE_TOS_PROXY;
+  if (workerBase) {
+    return `${String(workerBase).replace(/\/+$/, "")}/?url=${encodeURIComponent(url)}`;
+  }
+  // 本地：Vite dev server 中间件
   if (import.meta.env.DEV) {
     return `/api/tos-proxy?url=${encodeURIComponent(url)}`;
   }
+  console.warn("[ModelViewer] 未配置 VITE_TOS_PROXY，浏览器直连 TOS 会因跨域失败");
   return url;
 }
 

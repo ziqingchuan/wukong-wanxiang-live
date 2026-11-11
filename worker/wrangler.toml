@@ -1,0 +1,8 @@
+name = "wukong-tos-proxy"
+main = "tos-proxy.js"
+compatibility_date = "2025-01-01"
+
+# 是否限制只允许本站调用（可选）。
+# 部署后拿到 https://<name>.<subdomain>.workers.dev 地址，再决定要不要收紧。
+# [vars]
+# ALLOW_ORIGIN = "https://ziqingchuan.github.io"
