@@ -13,6 +13,7 @@ export type BoxResult = {
   roleName: string;
   title: string;
   rarity: Rarity;
-  image: string;
+  image: string;       // Seedream 生图，用作图鉴封面
+  modelUrl?: string;    // Seed3D 生成的 GLB 文件下载链接
   createdAt: number;
 };

@@ -37,6 +37,9 @@ export async function generateBox(role: Role): Promise<BoxResult> {
   const roleName = role.name.trim().slice(0, 30);
   const title = roleName + " · " + RARITY_META[rarity].name;
 
+  console.time("[ARK] 生图耗时");
+  console.log("[ARK] 开始生图:", roleName, rarity, "model:", model);
+
   const upstream = await fetch(baseUrl + "/images/generations", {
     method: "POST",
     headers: { Authorization: "Bearer " + apiKey, "Content-Type": "application/json" },
@@ -65,6 +68,9 @@ export async function generateBox(role: Role): Promise<BoxResult> {
     const detail = data?.error?.message || upstream.statusText || "图片生成未成功";
     throw new Error(`生图失败（${upstream.status}）：${detail}`);
   }
+
+  console.timeEnd("[ARK] 生图耗时");
+  console.log("[ARK] ✅ 生图成功, url:", data.data[0].url.slice(0, 80));
 
   return {
     id: crypto.randomUUID(),
