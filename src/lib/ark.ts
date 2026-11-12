@@ -20,8 +20,12 @@ const RARITY_META: Record<Rarity, { name: string; finish: string }> = {
   },
 };
 
-function buildPrompt(roleName: string, rarity: Rarity) {
-  return `以参考图中的原创悟空猴子为主体，设计与「${roleName}」深度融合的完整3D盲盒手办。必须保留参考图悟空的核心造型、圆脸、大眼、猴耳、卷尾、金色祥云头箍、红色围巾、原有表情气质与整体辨识度；同时准确提取「${roleName}」的角色形象、发型或头部轮廓、服装元素、标志配件、人物性格、主色调和辅助配色，并进行立体化设计。融合需要自然统一，不能只是简单换装。${RARITY_META[rarity].finish} 手办为PVC软质塑料，表面细腻哑光，边缘干净，五官精致但不改变原图角色特征。产品摄影构图，手办在前景正中央，正面三分之四视角，完整展示全身、配件和底座，轻微接触阴影，高清商业级PBR渲染。输出必须为真正透明背景的PNG RGBA图像：除手办、配件、底座和轻微接触阴影外，画布所有区域（特别是四个角）alpha值必须为0。不要环境、不要渐变或纯色背景、不要摄影棚背景、不要文字、不要logo、不要水印、不要包装盒。`;
+function buildPrompt(roleName: string, expression: string, rarity: Rarity) {
+  return `以参考图中的原创悟空猴子为主体，设计与「${roleName}」深度融合的完整3D盲盒手办。必须保留参考图悟空的核心造型、圆脸、猴耳、卷尾、金色祥云头箍、红色围巾与整体辨识度。
+
+【表情必须个性化，禁止套用参考图】眼睛形状、瞳孔样式、眉毛与嘴型都要依据「${roleName}」的性格重新设计：${expression}。严禁沿用参考图里的星星眼或任何固定眼型，不同角色的神情要一眼可辨。
+
+同时准确提取「${roleName}」的角色形象、发型或头部轮廓、服装元素、标志配件、人物性格、主色调和辅助配色，并进行立体化设计。融合需要自然统一，不能只是简单换装。${RARITY_META[rarity].finish} 手办为PVC软质塑料，表面细腻哑光，边缘干净，五官精致且贴合角色气质。产品摄影构图，手办在前景正中央，正面三分之四视角，完整展示全身、配件和底座，轻微接触阴影，高清商业级PBR渲染。输出必须为真正透明背景的PNG RGBA图像：除手办、配件、底座和轻微接触阴影外，画布所有区域（特别是四个角）alpha值必须为0。不要环境、不要渐变或纯色背景、不要摄影棚背景、不要文字、不要logo、不要水印、不要包装盒。`;
 }
 
 export async function generateBox(role: Role): Promise<BoxResult> {
@@ -45,7 +49,7 @@ export async function generateBox(role: Role): Promise<BoxResult> {
     headers: { Authorization: "Bearer " + apiKey, "Content-Type": "application/json" },
     body: JSON.stringify({
       model,
-      prompt: buildPrompt(roleName, rarity),
+      prompt: buildPrompt(roleName, role.expression, rarity),
       image: WUKONG_REFERENCE,
       size: "2K",
       output_format: "png",

@@ -12,6 +12,13 @@ import { playTone } from "./lib/audio";
 import { preloadImage } from "./lib/image";
 import { BASE_ROLES, createCustomRole } from "./lib/roles";
 import { generate3D } from "./lib/seed3d";
+import {
+  persistImage,
+  persistModel,
+  restoreGallery,
+  upsertGalleryMeta,
+} from "./lib/store";
+import { fetchZipRaw } from "./components/ModelViewer";
 import type { BoxResult, Role } from "./lib/types";
 
 type Screen = "home" | "morph" | "sealed" | "result";
@@ -77,6 +84,52 @@ export default function App() {
 
   useEffect(() => () => clearTimeout(toastTimer.current), []);
 
+  // 启动时从本地恢复图鉴（刷新不丢）
+  useEffect(() => {
+    restoreGallery()
+      .then(items => {
+        if (items.length > 0) setGallery(items);
+      })
+      .catch(err => console.warn("[store] 图鉴恢复失败:", err));
+  }, []);
+
+  /** 把远端的封面和 3D 落进 IndexedDB，元数据登记到 localStorage */
+  const archiveBox = async (box: BoxResult) => {
+    let hasImage = false;
+    let hasModel = false;
+
+    // 封面本地化
+    if (!box.image.startsWith("blob:")) {
+      try {
+        const localImageUrl = await persistImage(box.id, box.image);
+        box = { ...box, image: localImageUrl };
+        hasImage = true;
+      } catch (err) {
+        console.warn("[store] 封面存档失败:", err);
+      }
+    } else {
+      hasImage = true;
+    }
+
+    // 3D zip 本地化
+    if (box.modelUrl && !box.modelUrl.startsWith("local://")) {
+      try {
+        const zipBuffer = await fetchZipRaw(box.modelUrl);
+        await persistModel(box.id, zipBuffer);
+        box = { ...box, modelUrl: `local://${box.id}` };
+        hasModel = true;
+        console.log("[store] 3D 已存档:", box.id);
+      } catch (err) {
+        console.warn("[store] 3D 存档失败（链接 24h 后将失效）:", err);
+      }
+    } else if (box.modelUrl) {
+      hasModel = true;
+    }
+
+    upsertGalleryMeta(box, { hasImage, hasModel });
+    return box;
+  };
+
   const pickRole = (role: Role) => {
     setSelected(role);
     if (sound) playTone("select");
@@ -130,6 +183,8 @@ export default function App() {
         finalBox = await forge3D(box);
         setGenPhase("3d-done");
         setModelStatus("done");
+        // 存档到本地（封面 + 3D zip），链接 24h 过期也不怕
+        finalBox = await archiveBox(finalBox);
         setResult(finalBox);
         setGallery(current => current.map(item => (item.id === finalBox.id ? finalBox : item)));
         // 提前拉取模型，拆盒时即刻呈现
@@ -140,6 +195,10 @@ export default function App() {
         setGenFallback(true);
         setModelStatus("error");
         notify("3D 肉身铸造未成，本次以图鉴封面试开");
+        // 哪怕 3D 失败，封面也要存档
+        finalBox = await archiveBox(box);
+        setResult(finalBox);
+        setGallery(current => current.map(item => (item.id === finalBox.id ? finalBox : item)));
       }
 
       await sleep(650);
@@ -156,7 +215,8 @@ export default function App() {
     if (!result) return;
     setModelStatus("queued");
     try {
-      const patched = await forge3D(result);
+      let patched = await forge3D(result);
+      patched = await archiveBox(patched);
       setModelStatus("done");
       setResult(current => (current && current.id === patched.id ? patched : current));
       setGallery(current => current.map(item => (item.id === patched.id ? patched : item)));

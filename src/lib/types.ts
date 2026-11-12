@@ -4,6 +4,8 @@ export type Role = {
   color: string;
   rgb: string;
   trait: string;
+  /** 该角色对应的面部神态，用于驱动生图表情，避免所有模型都是同一个表情 */
+  expression: string;
 };
 
 export type Rarity = "common" | "rare" | "legendary";

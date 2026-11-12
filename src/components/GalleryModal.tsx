@@ -15,12 +15,27 @@ const RARITY_LABEL: Record<string, string> = {
   legendary: "传说款",
 };
 
+const FALLBACK_IMAGE =
+  "data:image/svg+xml;charset=utf-8," +
+  encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><rect width="100%" height="100%" fill="#1a1d26"/><text x="50%" y="56%" font-size="120" text-anchor="middle" fill="#d3b479">悟</text></svg>`,
+  );
+
 function GalleryCard({ item, onSelect }: { item: BoxResult; onSelect: (item: BoxResult) => void }) {
   return (
     <button className="gallery-card" data-rarity={item.rarity} onClick={() => onSelect(item)}>
       <div className="gallery-card__art">
         <span className="gallery-card__badge">{RARITY_LABEL[item.rarity] ?? RARITY_LABEL.common}</span>
-        <img src={item.image} loading="lazy" alt={item.title} />
+        <img
+          src={item.image || FALLBACK_IMAGE}
+          loading="lazy"
+          alt={item.title}
+          onError={event => {
+            // 兜底：本地 blob 失效或占位图异常时，退回内置占位图，避免出现空白卡片
+            const img = event.currentTarget;
+            if (img.src !== FALLBACK_IMAGE) img.src = FALLBACK_IMAGE;
+          }}
+        />
       </div>
       <div className="gallery-card__body">
         <h3>{item.title}</h3>

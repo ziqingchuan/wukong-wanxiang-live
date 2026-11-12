@@ -1,20 +1,27 @@
 import type { Role } from "./types";
 
 export const BASE_ROLES: Role[] = [
-  { name: "蜡笔小新", pattern: "swirl", color: "#b95648", rgb: "185,86,72", trait: "红黄童趣 · 调皮行动派" },
-  { name: "Hello Kitty", pattern: "bow", color: "#b85d7a", rgb: "184,93,122", trait: "蝴蝶结轮廓 · 温柔甜系" },
-  { name: "史迪奇", pattern: "stars", color: "#476f91", rgb: "71,111,145", trait: "深海蓝紫 · 顽皮外星感" },
-  { name: "海绵宝宝", pattern: "grid", color: "#b69a45", rgb: "182,154,69", trait: "明黄方形元素 · 乐观活力" },
-  { name: "库洛米", pattern: "jester", color: "#735593", rgb: "115,85,147", trait: "黑紫恶魔帽 · 反差甜酷" },
-  { name: "漩涡鸣人", pattern: "flame", color: "#a35e37", rgb: "163,94,55", trait: "橙黑忍装 · 热血坚韧" },
-  { name: "名侦探柯南", pattern: "bowtie", color: "#3f617d", rgb: "63,97,125", trait: "蓝西装与领结 · 冷静推理" },
-  { name: "哆啦A梦", pattern: "bell", color: "#397b8d", rgb: "57,123,141", trait: "蓝白圆润 · 未来道具感" },
-  { name: "美少女战士", pattern: "crescent", color: "#8a5f82", rgb: "138,95,130", trait: "月亮冠饰 · 华丽守护感" },
-  { name: "小黄人", pattern: "goggle", color: "#a58b42", rgb: "165,139,66", trait: "黄蓝工装 · 搞怪机械感" },
+  { name: "蜡笔小新", pattern: "swirl", color: "#b95648", rgb: "185,86,72", trait: "红黄童趣 · 调皮行动派", expression: "眉毛上挑、咧嘴坏笑，眼神狡黠又天真" },
+  { name: "Hello Kitty", pattern: "bow", color: "#b85d7a", rgb: "184,93,122", trait: "蝴蝶结轮廓 · 温柔甜系", expression: "眼神柔和含笑、嘴角浅浅上扬的乖巧神情" },
+  { name: "史迪奇", pattern: "stars", color: "#476f91", rgb: "71,111,145", trait: "深海蓝紫 · 顽皮外星感", expression: "圆眼瞪大、咧嘴露齿，透着一股捣蛋的机灵劲" },
+  { name: "海绵宝宝", pattern: "grid", color: "#b69a45", rgb: "182,154,69", trait: "明黄方形元素 · 乐观活力", expression: "眼睛睁得溜圆发亮、张嘴大笑的乐观神情" },
+  { name: "库洛米", pattern: "jester", color: "#735593", rgb: "115,85,147", trait: "黑紫恶魔帽 · 反差甜酷", expression: "半眯着眼、嘴角勾起的甜酷坏笑" },
+  { name: "漩涡鸣人", pattern: "flame", color: "#a35e37", rgb: "163,94,55", trait: "橙黑忍装 · 热血坚韧", expression: "眼神坚毅发亮、咧嘴自信笑的热血神情" },
+  { name: "名侦探柯南", pattern: "bowtie", color: "#3f617d", rgb: "63,97,125", trait: "蓝西装与领结 · 冷静推理", expression: "眉头微蹙、目光锐利专注的冷静推理神情" },
+  { name: "哆啦A梦", pattern: "bell", color: "#397b8d", rgb: "57,123,141", trait: "蓝白圆润 · 未来道具感", expression: "眼睛圆圆的好奇表情、嘴角温和的憨厚微笑" },
+  { name: "美少女战士", pattern: "crescent", color: "#8a5f82", rgb: "138,95,130", trait: "月亮冠饰 · 华丽守护感", expression: "眼眸明亮坚定、下巴微扬的自信优雅神情" },
+  { name: "小黄人", pattern: "goggle", color: "#a58b42", rgb: "165,139,66", trait: "黄蓝工装 · 搞怪机械感", expression: "眼睛瞪圆呆萌、咧嘴傻乐的搞怪神情" },
 ];
 
 export function createCustomRole(name: string): Role {
-  return { name, pattern: "custom", color: "#8b7550", rgb: "139,117,80", trait: "自炼角色 · 专属万象融合" };
+  return {
+    name,
+    pattern: "custom",
+    color: "#8b7550",
+    rgb: "139,117,80",
+    trait: "自炼角色 · 专属万象融合",
+    expression: `神态由「${name}」这个名字传达的气质自然生成，可与参考图完全不同`,
+  };
 }
 
 type VersePool = { weight: number; lines: string[] };
